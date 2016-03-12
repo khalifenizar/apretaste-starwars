@@ -1,4 +1,4 @@
-<h1>Star Wars</h1>
+<h1>latino.StarWars.com</h1>
 <p>Noticias del mundo de Star Wars.</p>
 
 {space15}

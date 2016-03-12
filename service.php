@@ -19,7 +19,7 @@ class StarWars extends Service
 		// create the response
 		$response = new Response();
 		$response->setResponseSubject("StarWars.com: Página principal");
-		$response->createFromTemplate("basic.tpl", $template_variables);
+		$response->createFromTemplate("home.tpl", $template_variables);
 		return $response;
 	}
 
