@@ -1,1 +1,4 @@
 *.zip
+/config.xml
+/service.php
+/templates
