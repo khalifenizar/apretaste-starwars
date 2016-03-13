@@ -1,18 +1,17 @@
 <service>
 	<serviceName>starwars</serviceName>
-	<serviceDescription>Enseña noticias de Star Wars de la página StarWars.com.</serviceDescription>
+	<serviceDescription>Enseña noticias de Star Wars del sitio Web latino.StarWars.com.</serviceDescription>
 	<creatorEmail>khalifenizar@gmail.com</creatorEmail>
-	<!--serviceCategory: negocios,ocio,academico,social,comunicaciones,informativo,adulto,otros-->
 	<serviceCategory>ocio</serviceCategory>
 	<serviceUsage>
 		<![CDATA[
-			Escriba un nuevo email a {APRETASTE_EMAIL} y en el asunto ponga la palabra starwars
+			Escriba un nuevo email a {APRETASTE_EMAIL} y en el asunto ponga la palabra STARWARS
 
 			Por ejemplo:
 			Para: {APRETASTE_EMAIL}
-			Asunto: starwars
+			Asunto: STARWARS
 
-			Recibir&aacute; un email con noticias de Star Wars de la página StarWars.com.
+			Recibir&aacute; un email con una lista de noticias de Star Wars.
 		]]>
 	</serviceUsage>
 </service>
