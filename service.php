@@ -23,13 +23,20 @@ class StarWars extends Service
 
 			$response->setResponseSubject("latino.StarWars.com: Página principal");
 			$response->createFromTemplate("home.tpl", $template_variables);
-		} else {
+		} elseif (strpos($article_url, "/banco-de-datos/") === false) {
 			$article = $this->starWarsArticleContent($article_url);
 
 			$template_variables["article"] = $article;
 
 			$response->setResponseSubject("latino.StarWars.com: " . $article["title"]);
 			$response->createFromTemplate("article.tpl", $template_variables);
+		} else {
+			$entry = $this->starWarsDatabaseContent($article_url);
+
+			$template_variables["entry"] = $entry;
+
+			$response->setResponseSubject("latino.StarWars.com: " . $entry["name"]);
+			$response->createFromTemplate("database_entry.tpl", $template_variables);
 		}
 
 		return $response;
@@ -131,6 +138,33 @@ class StarWars extends Service
 			"content" => $content,
 			"category" => $category_and_date[0],
 			"date" => $category_and_date[1]
+		);
+	}
+
+
+	protected function starWarsDatabaseContent ($url) {
+		$crawler = $this->getCrawler($url);
+
+		$featured = $crawler->filter(".featured_single");
+
+		$stats = array();
+
+		$crawler->filter(".stats-container .category")->each(function ($cat) use (&$stats, $labels) {
+			$category_values = array();
+
+			$cat->filter("li")->each(function ($item) use (&$category_values) {
+				$category_values[] = trim($item->text(), " ,\n\r");
+			});
+
+			$heading = $cat->filter(".heading")->text();
+
+			$stats[$heading] = $category_values;
+		});
+
+		return array(
+			"name" => $featured->filter(".title")->text(),
+			"description" => $featured->filter(".desc")->text(),
+			"stats" => $stats
 		);
 	}
 
