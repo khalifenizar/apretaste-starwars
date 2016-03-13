@@ -12,17 +12,31 @@ class StarWars extends Service
 	 * */
 	public function _main(Request $request)
 	{
-		$starWarsSections = $this->starWarsContentSections();
-
-		$template_variables = array("sections" => $starWarsSections);
-
-		// create the response
+		$article_url = $request->query;
 		$response = new Response();
-		$response->setResponseSubject("StarWars.com: Página principal");
-		$response->createFromTemplate("home.tpl", $template_variables);
+		$template_variables = array();
+
+		if (empty($article_url)) {
+			$starWarsSections = $this->starWarsContentSections();
+	
+			$template_variables["sections"] = $starWarsSections;
+
+			$response->setResponseSubject("latino.StarWars.com: Página principal");
+			$response->createFromTemplate("home.tpl", $template_variables);
+		} else {
+			$article = $this->starWarsArticleContent($article_url);
+
+			$template_variables["article"] = $article;
+
+			$response->setResponseSubject("latino.StarWars.com: " . $article["title"]);
+			$response->createFromTemplate("article.tpl", $template_variables);
+		}
+
 		return $response;
 	}
 
+
+	protected static $base_url = "http://latino.starwars.com";
 
 	/**
 	 * Crawls http://latino.starwars.com and returns article sections.
@@ -37,7 +51,7 @@ class StarWars extends Service
 		$client->setClient($guzzle);
 
 		// create a crawler
-		$crawler = $client->request("GET", "http://latino.starwars.com");
+		$crawler = $client->request("GET", self::$base_url);
 
 		// search for result
 		$sections = array();
@@ -93,7 +107,7 @@ class StarWars extends Service
 	 * @return string
 	 * */
 	protected function getArticleUrl ($url) {
-		$prefix = "http://latino.starwars.com";
+		$prefix = self::$base_url;
 
 		if (strpos($url, $prefix) !== false) {
 			$url = "STARWARS " . substr($url, strlen($prefix));
@@ -102,5 +116,31 @@ class StarWars extends Service
 		}
 
 		return urlencode($url);
+	}
+
+
+	protected function starWarsArticleContent ($url) {
+		// create a new client
+		$client = new Client();
+		$guzzle = $client->getClient();
+		$guzzle->setDefaultOption("verify", false);
+		$client->setClient($guzzle);
+
+		// create a crawler
+		$crawler = $client->request("GET", self::$base_url . $url);
+
+		$category_and_date = explode(" // ", $crawler->filter(".article-date")->text());
+		$content = array();
+
+		$crawler->filter(".entry-content p")->each(function ($p) use (&$content) {
+			$content[] = $p->text();
+		});
+
+		return array(
+			"title" => $crawler->filter(".entry-title")->text(),
+			"content" => $content,
+			"category" => $category_and_date[0],
+			"date" => $category_and_date[1]
+		);
 	}
 }
