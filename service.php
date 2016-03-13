@@ -13,32 +13,32 @@ class StarWars extends Service
 	public function _main(Request $request)
 	{
 		$article_url = $request->query;
-		$response = new Response();
-		$template_variables = array();
 
 		if (empty($article_url)) {
 			$starWarsSections = $this->starWarsContentSections();
 	
-			$template_variables["sections"] = $starWarsSections;
-
-			$response->setResponseSubject("latino.StarWars.com: Página principal");
-			$response->createFromTemplate("home.tpl", $template_variables);
-		} elseif (strpos($article_url, "/banco-de-datos/") === false) {
+			$subject = "latino.StarWars.com: Página principal";
+			$template_name = "home.tpl";
+			$template_variables = array("sections" => $starWarsSections);
+		}
+		elseif (strpos($article_url, "/banco-de-datos/") === false) {
 			$article = $this->starWarsArticleContent($article_url);
 
-			$template_variables["article"] = $article;
-
-			$response->setResponseSubject("latino.StarWars.com: " . $article["title"]);
-			$response->createFromTemplate("article.tpl", $template_variables);
-		} else {
+			$subject = "latino.StarWars.com: " . $article["title"];
+			$template_name = "article.tpl";
+			$template_variables = array("article" => $article);
+		}
+		else {
 			$entry = $this->starWarsDatabaseContent($article_url);
 
-			$template_variables["entry"] = $entry;
-
-			$response->setResponseSubject("latino.StarWars.com: " . $entry["name"]);
-			$response->createFromTemplate("database_entry.tpl", $template_variables);
+			$subject = "latino.StarWars.com: " . $entry["name"];
+			$template_name = "database_entry.tpl";
+			$template_variables = array("entry" => $entry);
 		}
 
+		$response = new Response();
+		$response->setResponseSubject($subject);
+		$response->createFromTemplate($template_name, $template_variables);
 		return $response;
 	}
 
