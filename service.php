@@ -44,14 +44,7 @@ class StarWars extends Service
 	 * @return array[]
 	 * */
 	protected function starWarsContentSections() {
-		// create a new client
-		$client = new Client();
-		$guzzle = $client->getClient();
-		$guzzle->setDefaultOption("verify", false);
-		$client->setClient($guzzle);
-
-		// create a crawler
-		$crawler = $client->request("GET", self::$base_url);
+		$crawler = $this->getCrawler();
 
 		// search for result
 		$sections = array();
@@ -124,14 +117,7 @@ class StarWars extends Service
 
 
 	protected function starWarsArticleContent ($url) {
-		// create a new client
-		$client = new Client();
-		$guzzle = $client->getClient();
-		$guzzle->setDefaultOption("verify", false);
-		$client->setClient($guzzle);
-
-		// create a crawler
-		$crawler = $client->request("GET", self::$base_url . $url);
+		$crawler = $this->getCrawler($url);
 
 		$category_and_date = explode(" // ", $crawler->filter(".article-date")->text());
 		$content = array();
@@ -146,5 +132,18 @@ class StarWars extends Service
 			"category" => $category_and_date[0],
 			"date" => $category_and_date[1]
 		);
+	}
+
+
+	protected function getCrawler ($url = "") {
+		$client = new Client();
+		$guzzle = $client->getClient();
+		$guzzle->setDefaultOption("verify", false);
+		$client->setClient($guzzle);
+
+		// create a crawler
+		$crawler = $client->request("GET", self::$base_url . $url);
+
+		return $crawler;
 	}
 }
