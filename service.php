@@ -75,6 +75,10 @@ class StarWars extends Service
 
 				$section
 					->filter(".building-block")
+					->reduce(function ($article) {
+						$category = $article->filter(".category-info .category-name")->text();
+						return $category != "Video";
+					})
 					->each(function ($article) use (&$current_section) {
 						$desc_html = $article->filter(".desc-sizer .desc");
 						$title_html = $article->filter(".title a");
