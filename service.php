@@ -63,7 +63,7 @@ class StarWars extends Service
 				$title = $section->filter(".module_title");
 
 				if ($title->count()) {
-					if ($current_section !== null) {
+					if ($current_section !== null && $current_section["title"] != "EVENTOS //") {
 						$sections[] = $current_section;
 					}
 
@@ -71,6 +71,10 @@ class StarWars extends Service
 						"title" => $title->text(),
 						"articles" => array()
 					);
+				}
+
+				if ($current_section["title"] == "EVENTOS //") {
+					return;
 				}
 
 				$section
@@ -98,7 +102,9 @@ class StarWars extends Service
 					});
 			});
 
-		$sections[] = $current_section;
+		if ($current_section["title"] != "EVENTOS //") {
+			$sections[] = $current_section;
+		}
 
 		return $sections;
   }
